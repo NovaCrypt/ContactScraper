@@ -40,38 +40,41 @@ def scrape_for_html(url: str):
   html_raw = page.read()
   html = html_raw.decode("utf-8")
 
-  urlRegex = re.compile(r'(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*))')
+  # The below is excluded due to an exception being thrown...
 
-  new_urls = []
-  new_urls = append_urls_if_not_present(urlRegex, new_urls, url, html)
+  # urlRegex = re.compile(r'(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*))')
 
-  if len(new_urls) > 0:
-    html = iterate_new_urls(html, urlRegex, new_urls)
+  # new_urls = []
+  # new_urls = append_urls_if_not_present(urlRegex, new_urls, url, html)
+
+  # if len(new_urls) > 0:
+  #   html = iterate_new_urls(html, urlRegex, new_urls, url)
 
   return html
 
 
 # ITERATES THROUGH SCRAPES OF URLS FOUND AND GRABS ALL TEXT FROM THE DOMAIN.
-def iterate_new_urls(html, urlRegex, new_urls, original_url):
-  for index in range(len(new_urls)):
-    new_page = urllib_request.urlopen(new_urls[index])
-    new_html_raw = new_page.read()
-    new_html = new_html_raw.decode("utf-8")
-    html = str(html).join('\n' + new_html)
+# def iterate_new_urls(html, urlRegex, new_urls, original_url):
+#   for index in range(len(new_urls)):
+#     new_page = urllib_request.urlopen(new_urls[index])
+#     new_html_raw = new_page.read()
+#     TODO Fix "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte"
+#     new_html = new_html_raw.decode("utf-8")
+#     html = str(html).join('\n' + new_html)
 
-    new_urls = append_urls_if_not_present(urlRegex, new_urls, original_url, new_html)
+#     new_urls = append_urls_if_not_present(urlRegex, new_urls, original_url, new_html)
 
-  return html
+#   return html
 
 
 # FILTERS URLS ALREADY IN LIST FROM BEING ADDED INFINITELY.
-def append_urls_if_not_present(urlRegex, new_urls, original_url, html):
-  for groups in urlRegex.findall(html):
-    if groups[0] not in new_urls:
-      if groups[0] != original_url:
-        new_urls.append(groups[0])
+# def append_urls_if_not_present(urlRegex, new_urls, original_url, html):
+#   for groups in urlRegex.findall(html):
+#     if groups not in new_urls:
+#       if groups != original_url:
+#         new_urls.append(groups)
 
-  return new_urls
+#   return new_urls
 
 
 # WINDOW FOR RESULTS DISPLAY
