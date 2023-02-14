@@ -43,8 +43,7 @@ def scrape_for_html(url: str):
   urlRegex = re.compile(r'(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*))')
 
   new_urls = []
-  for groups in urlRegex.findall(html):
-    new_urls.append(groups[0])
+  new_urls = append_urls_if_not_present(urlRegex, new_urls, url, html)
 
   if len(new_urls) > 0:
     html = iterate_new_urls(html, urlRegex, new_urls)
@@ -53,16 +52,26 @@ def scrape_for_html(url: str):
 
 
 # ITERATES THROUGH SCRAPES OF URLS FOUND AND GRABS ALL TEXT FROM THE DOMAIN.
-def iterate_new_urls(html, urlRegex, urls):
-  for index in range(len(urls)):
-    new_page = urllib_request.urlopen(urls[index])
+def iterate_new_urls(html, urlRegex, new_urls, original_url):
+  for index in range(len(new_urls)):
+    new_page = urllib_request.urlopen(new_urls[index])
     new_html_raw = new_page.read()
-    html = str(html).join('\n' + new_html_raw.decode("utf-8"))
+    new_html = new_html_raw.decode("utf-8")
+    html = str(html).join('\n' + new_html)
 
-    for groups in urlRegex.findall(urls[index]):
-      urls.append(groups[0])
+    new_urls = append_urls_if_not_present(urlRegex, new_urls, original_url, new_html)
 
   return html
+
+
+# FILTERS URLS ALREADY IN LIST FROM BEING ADDED INFINITELY.
+def append_urls_if_not_present(urlRegex, new_urls, original_url, html):
+  for groups in urlRegex.findall(html):
+    if groups[0] not in new_urls:
+      if groups[0] != original_url:
+        new_urls.append(groups[0])
+
+  return new_urls
 
 
 # WINDOW FOR RESULTS DISPLAY
