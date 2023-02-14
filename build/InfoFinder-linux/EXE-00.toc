@@ -62,7 +62,7 @@
  [],
  False,
  False,
- 1676379540,
+ 1676382885,
  [('run',
    '/home/oliverhunter/.local/lib/python3.11/site-packages/PyInstaller/bootloader/Linux-64bit-intel/run',
    'EXECUTABLE')])
